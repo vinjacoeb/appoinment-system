@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import AppLayout from "@/primevue/layout/AppLayout.vue";
+import AppLayout from "@/primevue/layout/AppLayoutPasien.vue";
 import Media from "@/primevue/views/uikit/Media.vue";
 defineOptions({layout: AppLayout});
 

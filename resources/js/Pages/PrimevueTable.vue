@@ -6,7 +6,7 @@
 
 <script setup>
 
-import AppLayout from "@/primevue/layout/AppLayout.vue";
+import AppLayout from "@/primevue/layout/AppLayoutPasien.vue";
 import Table from "@/primevue/views/uikit/Table.vue";
 </script>
 

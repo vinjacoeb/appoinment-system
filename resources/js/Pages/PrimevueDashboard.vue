@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import AppLayout from "@/primevue/layout/AppLayout.vue";
+import AppLayout from "@/primevue/layout/AppLayoutPasien.vue";
 import Dashboard  from "@/primevue/views/Dashboard.vue";
 </script>
 
