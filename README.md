@@ -1,14 +1,23 @@
-# Laravel Inertiajs with Vue and PrimeVue Sakai theme
+# Laravel Inertiajs with Vue
 This is a demo Laravel-InertiaJS app using Sakai Theme From Primevue
 
 ## Project Setup
 
     Composer install
     npm install
+    
+## Project Setup 2
+    copy .env.example
+    paste and then change name to .env
+    php artisan key:generate
+
+## Project Setup 3
+    php artisan migrate:fresh --seed
 
 ## Run the project
 
     npm run dev
+    php artisan serve
 
 ## Explained tutorial how to integrate the theme
 <a href="https://dev.to/xtreme2020/add-primevue-theme-to-laravel-inertiajs-1n7b">Add Primevue Theme to Laravel Inertiajs</a>
