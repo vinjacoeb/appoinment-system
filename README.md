@@ -1,5 +1,5 @@
 # Laravel Inertiajs with Vue
-This is a demo Laravel-InertiaJS app using Sakai Theme From Primevue
+This is appointment-system using Laravel-InertiaJS app using Sakai Theme From Primevue
 
 ## Project Setup
 
