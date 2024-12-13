@@ -47,7 +47,7 @@ Route::middleware('auth:pasien')->group(function () {
     Route::get('/dashboard/pasien', [PasienDashboardController::class, 'index'])->name('dashboard.pasien');
     Route::get('/dashboard/daftar-poli', [DaftarPoliController::class, 'index'])->name('daftar-poli.index');
     Route::post('/dashboard/daftar-poli', [DaftarPoliController::class, 'store'])->name('daftar-poli.store');
-    Route::get('/daftar-poli/jadwal/{id_poli}', [DaftarPoliController::class, 'getJadwalByPoli'])->name('daftar-poli.jadwal');
+    Route::post('/get-jadwal-by-poli', [DaftarPoliController::class, 'getJadwalByPoli']);
 
 
 });

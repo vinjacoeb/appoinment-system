@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Daftar extends Model
 {
     use HasFactory;
+    protected $table = 'daftar_poli';
 
     protected $fillable = [
         'id_pasien',
