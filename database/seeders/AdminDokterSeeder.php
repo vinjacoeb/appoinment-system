@@ -13,18 +13,6 @@ class AdminDokterSeeder extends Seeder
      */
     public function run(): void
     {
-        // Menambahkan Admin
-        DB::table('dokter')->insert([
-            'nama' => 'Admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('admin123'), // Ganti dengan password yang aman
-            'alamat' => 'Alamat Admin',
-            'no_hp' => '081234567890',
-            'id_poli' => 1, // Sesuaikan dengan ID poli yang ada
-            'role' => 0, // 0 untuk admin
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
 
         // Menambahkan Dokter
         DB::table('dokter')->insert([
@@ -34,7 +22,15 @@ class AdminDokterSeeder extends Seeder
             'alamat' => 'Alamat Dokter',
             'no_hp' => '081234567891',
             'id_poli' => 1, // Sesuaikan dengan ID poli yang ada
-            'role' => 1, // 1 untuk dokter
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+
+        DB::table('users')->insert([
+            'name' => 'admin',
+            'email' => 'admin@admin.com',
+            'password' => Hash::make('admin123'),
             'created_at' => now(),
             'updated_at' => now(),
         ]);

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('no_hp', 15)->nullable();
             $table->unsignedBigInteger('id_poli');
             $table->foreign('id_poli')->references('id')->on('poli')->onDelete('cascade');
-            $table->tinyInteger('role')->default(0)->comment('0 = Admin, 1 = Dokter');
             $table->timestamps();
         });
     }

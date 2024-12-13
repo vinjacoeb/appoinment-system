@@ -3,21 +3,28 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Dokter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Dokter;
 use Inertia\Inertia;
 
 class DokterController extends Controller
 {
-    // Menampilkan Form Login
+    /**
+     * Menampilkan form login dokteren.
+     */
     public function showLoginForm()
     {
-        return Inertia::render('Auth/LoginDokter', ['type' => 'dokter']);
+        return Inertia::render('Auth/LoginDokter', [
+            'type' => 'dokter',
+        ]);
     }
 
-    // Proses Login
-    public function login(Request $request)
+    /**
+     * Proses login dokteren.
+     */
+    public function loginDokter(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
@@ -26,30 +33,39 @@ class DokterController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-
-            // Cek role untuk redirect sesuai hak akses
-            if ($user->role === 0) {
-                return redirect()->route('dashboard.admin');
-            } elseif ($user->role === 1) {
-                return redirect()->route('dashboard.dokter');
-            } else {
-                Auth::logout();
-                return back()->withErrors(['email' => 'Role tidak valid.']);
-            }
+        if (Auth::guard('dokter')->attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('dashboard.dokter')); // Harus mengarah ke /dashboard/dokteren
         }
+        
 
+        // Jika login gagal
         return back()->withErrors([
             'email' => 'Email atau password salah.',
-        ])->withInput();
+        ])->onlyInput('email');
     }
 
-    // Dashboard Dokter
-    public function dashboard()
+    /**
+     * Menampilkan dashboard dokteren.
+     */
+    public function dashboarDokter()
     {
         return Inertia::render('Dashboard/DokterDashboard', [
-            'user' => Auth::user(),
+            'user' => Auth::guard('dokter')->user(),
+            'role' => 'dokter',
         ]);
+    }
+
+    /**
+     * Logout dokteren.
+     */
+    public function logoutDokter(Request $request)
+    {
+        Auth::guard('dokter')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('/');
     }
 }

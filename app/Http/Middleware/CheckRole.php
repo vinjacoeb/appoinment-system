@@ -3,15 +3,25 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class CheckRole
 {
-    public function handle($request, Closure $next, ...$roles)
-    {
-        if (Auth::check() && in_array(Auth::user()->role, $roles)) {
-            return $next($request);
-        }
-        abort(403, 'Anda tidak memiliki akses.');
+    public function handle($request, Closure $next, $role)
+{
+    if (!auth()->check()) {
+        return redirect('/login');
     }
+
+    $user = auth()->user();
+
+    // Memeriksa apakah role pengguna sesuai dengan string (contoh: '1' untuk 'dokter')
+    if ($user->role !== (string) $role) {
+        return redirect()->back()->withErrors(['role' => 'Anda tidak memiliki akses sebagai ' . $role . '.']);
+    }
+
+    return $next($request);
 }
+
+}
+

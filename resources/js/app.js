@@ -15,10 +15,11 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import ConfirmPopup from 'primevue/confirmpopup';
 import Dialog from 'primevue/dialog';
 
+
+
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -40,7 +41,6 @@ createInertiaApp({
              .component('ConfirmDialog', ConfirmDialog)
              .component('ConfirmPopup', ConfirmPopup)
              .component('Dialog', Dialog)
-            .use(ZiggyVue)
             .mount(el);
     },
     progress: {

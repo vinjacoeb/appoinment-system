@@ -6,25 +6,25 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Pasien;
+use App\Models\Admin;
 use Inertia\Inertia;
 
-class PasienController extends Controller
+class AdminController extends Controller
 {
     /**
-     * Menampilkan form login pasien.
+     * Menampilkan form login dokteren.
      */
     public function showLoginForm()
     {
-        return Inertia::render('Auth/LoginPasien', [
-            'type' => 'pasien',
+        return Inertia::render('Auth/LoginAdmin', [
+            'type' => 'admin',
         ]);
     }
 
     /**
-     * Proses login pasien.
+     * Proses login dokteren.
      */
-    public function loginPasien(Request $request)
+    public function loginAdmin(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
@@ -33,9 +33,9 @@ class PasienController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (Auth::guard('pasien')->attempt($credentials)) {
+        if (Auth::guard('admin')->attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('dashboard.pasien')); // Harus mengarah ke /dashboard/pasien
+            return redirect()->intended(route('dashboard.admin')); // Harus mengarah ke /dashboard/dokteren
         }
         
 
@@ -46,22 +46,22 @@ class PasienController extends Controller
     }
 
     /**
-     * Menampilkan dashboard pasien.
+     * Menampilkan dashboard dokteren.
      */
-    public function dashboardPasien()
+    public function dashboarAdmin()
     {
-        return Inertia::render('Dashboard/PasienDashboard', [
-            'user' => Auth::guard('pasien')->user(),
-            'role' => 'pasien',
+        return Inertia::render('Dashboard/AdminDashboard', [
+            'user' => Auth::guard('admin')->user(),
+            'role' => 'admin',
         ]);
     }
 
     /**
-     * Logout pasien.
+     * Logout dokteren.
      */
-    public function logoutPasien(Request $request)
+    public function logoutAdmin(Request $request)
     {
-        Auth::guard('pasien')->logout();
+        Auth::guard('admin')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

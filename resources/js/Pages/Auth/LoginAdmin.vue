@@ -15,7 +15,7 @@ const form = useForm({
 
 // Fungsi untuk submit form login
 const submit = () => {
-    form.post(route('dokter.login'), {
+    form.post(route('admin.login'), {
         onFinish: () => form.reset('password'),
     });
 };
@@ -24,12 +24,7 @@ const submit = () => {
 <template>
     <GuestLayout>
         <!-- Title untuk halaman -->
-        <Head title="Login Pasien" />
-
-        <!-- Header dengan teks sambutan -->
-        <div class="text-center text-2xl font-bold mb-6">
-            <p>Halo Dokter, Silakan Login</p>
-        </div>
+        <Head title="Login Admin" />
 
         <!-- Form login -->
         <form @submit.prevent="submit">

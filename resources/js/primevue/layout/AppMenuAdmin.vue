@@ -7,9 +7,12 @@ import AppMenuItem from './AppMenuItem.vue';
 const model = ref([
     {
         label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/dashboard/pasien' },
-                { label: 'Daftar Poli', icon: 'pi pi-fw pi-table', to: '/dashboard/daftar-poli' },
-                { label: 'Logout', icon: 'pi pi-fw pi-power-off', command: () => logout() } // Add logout button
+        items: [{ label: 'Admin Dashboard', icon: 'pi pi-fw pi-cog', to: '/dashboard/admin' },
+            { label: 'Edit Dokter', icon: 'pi pi-fw pi-user-edit', to: '/dashboard/crud-dokter' },
+            { label: 'Edit Pasien', icon: 'pi pi-fw pi-user-edit', to: '/dashboard/crud-pasien' },
+            { label: 'Poli', icon: 'pi pi-fw pi-calendar', to: '/dashboard/poli' },
+            { label: 'Obat', icon: 'pi pi-fw pi-shield', to: '/dashboard/obat' },
+            { label: 'Logout', icon: 'pi pi-fw pi-power-off', command: () => logout() }
         ]
     }
 ]);

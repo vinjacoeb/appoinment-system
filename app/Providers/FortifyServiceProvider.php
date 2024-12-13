@@ -24,7 +24,7 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Custom login response berdasarkan role pengguna
+        // Custom login response based on user role
         app()->singleton(LoginResponse::class, function () {
             return new class implements LoginResponse {
                 public function toResponse($request)
@@ -34,15 +34,14 @@ class FortifyServiceProvider extends ServiceProvider
                         return redirect()->intended('/dashboard/dokter'); // Redirect to doctor dashboard
                     } elseif (auth()->guard('pasien')->check()) {
                         return redirect()->intended('/dashboard/pasien'); // Redirect to patient dashboard
+                    } elseif (auth()->guard('admin')->check()) {
+                        return redirect()->intended('/dashboard/admin'); // Redirect to admin dashboard
                     }
-        
+
                     return redirect('/login'); // Fallback if no guard is authenticated
                 }
             };
         });
-        
-        
-        
     }
 
     /**
@@ -50,24 +49,24 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Registrasi tindakan Fortify
+        // Register Fortify actions
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
 
-        // Tampilan login sesuai dengan 'type' (pasien, dokter, admin)
+        // Define the login view based on the 'type' (pasien, dokter, admin)
         Fortify::loginView(function (Request $request) {
-            $type = $request->get('type', 'pasien'); // Default 'pasien'
+            $type = $request->get('type', 'pasien');
             return Inertia::render("Auth/Login" . ucfirst($type), [
                 'type' => $type,
             ]);
         });
-        
-        // Tampilan registrasi pasien
+
+        // Define the registration view for patients
         Fortify::registerView(fn() => Inertia::render('Auth/Register'));
 
-        // Batasan login per IP
+        // Rate limit login attempts based on IP address and username
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(
                 Str::lower($request->input(Fortify::username())) . '|' . $request->ip()
@@ -75,32 +74,34 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($throttleKey);
         });
 
-        // Batasan autentikasi dua faktor
+        // Rate limit two-factor authentication attempts
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
 
-        // Cukup satu kali autentikasi menggunakan Fortify
+        // Authenticate the user using the selected guard
         Fortify::authenticateUsing(function (Request $request) {
             $credentials = $request->only('email', 'password');
             // Debugging session before attempting login
             \Log::info('Guard Attempt: ', ['guard' => $request->get('guard', 'pasien')]);
 
+            // Try to authenticate as pasien
             if (auth()->guard('pasien')->attempt($credentials)) {
                 \Log::info('Pasien authenticated');
                 return auth()->guard('pasien')->user();
             }
-        
-            // Login dokter
+
+            // Try to authenticate as dokter
             if (auth()->guard('dokter')->attempt($credentials)) {
                 return auth()->guard('dokter')->user();
             }
-        
-            // Login admin
+
+            // Try to authenticate as admin
             if (auth()->guard('admin')->attempt($credentials)) {
                 return auth()->guard('admin')->user();
             }
-        
+
+            // Return null if authentication fails
             return null;
         });
     }
