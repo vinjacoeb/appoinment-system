@@ -16,6 +16,8 @@ use App\Http\Controllers\Auth\PasienDashboardController;
 use App\Http\Controllers\DaftarPoliController;
 use App\Http\Controllers\CRUDDokterController;
 use App\Http\Controllers\CRUDPasienController;
+use App\Http\Controllers\CRUDPoliController;
+use App\Http\Controllers\CRUDObatController;
 use App\Http\Controllers\Auth\DokterDashboardController;
 use App\Http\Controllers\Auth\AdminDashboardController;
 
@@ -59,6 +61,7 @@ Route::middleware('auth:pasien')->group(function () {
 
 Route::middleware(['auth:dokter'])->group(function () {
     Route::get('/dashboard/dokter', [DokterDashboardController::class, 'index'])->name('dashboard.dokter');
+    
 });
 
 Route::middleware(['auth:admin'])->group(function () {
@@ -75,11 +78,29 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::put('/dokter/{id}', [CRUDDokterController::class, 'update']);
     
     Route::get('/dashboard/crud-pasien', [CRUDPasienController::class, 'index'])->name('pasien.index');
+    Route::delete('/dashboard/crud-pasien/{pasien}', [CRUDPasienController::class, 'destroy'])->name('pasien.destroy');
     Route::get('/pasien', [CRUDPasienController::class, 'getPasien']);
     Route::post('/pasien', [CRUDPasienController::class, 'store']); // To create a new pasien
     Route::put('/pasien/{id}', [CRUDPasienController::class, 'update']); // To update pasien by ID
-    Route::delete('/pasien/{id}', [CRUDPasienController::class, 'destroy'])->name('pasien.destroy');
     Route::post('/pasien/hash-password', [CRUDPasienController::class, 'hashPassword']); // To hash password"
+
+
+    Route::get('/dashboard/crud-poli', [CRUDPoliController::class, 'index'])->name('poli.index');
+    Route::post('/dashboard/crud-poli', [CRUDPoliController::class, 'store'])->name('poli.store');
+    Route::put('/dashboard/crud-poli/{id}', [CRUDPoliController::class, 'update'])->name('poli.update');
+    Route::delete('/dashboard/crud-poli/{id}', [CRUDPoliController::class, 'destroy'])->name('poli.destroy');
+    Route::get('/poli', [CRUDPoliController::class, 'getPoli']);
+    Route::post('/poli', [CRUDPoliController::class, 'store']);
+    Route::post('/poli/{id}', [CRUDPoliController::class, 'update']);
+
+
+    Route::get('/dashboard/crud-obat', [CRUDObatController::class, 'index'])->name('obat.index');
+    Route::post('/dashboard/crud-obat', [CRUDObatController::class, 'store'])->name('obat.store');
+    Route::put('/dashboard/crud-obat/{id}', [CRUDObatController::class, 'update'])->name('obat.update');
+    Route::delete('/dashboard/crud-obat/{id}', [CRUDObatController::class, 'destroy'])->name('obat.destroy');
+    Route::get('/obat', [CRUDObatController::class, 'getObat']);
+    Route::post('/obat', [CRUDObatController::class, 'store']);
+    Route::post('/obat/{id}', [CRUDObatController::class, 'update']);
 });
 
 // Password Reset Routes

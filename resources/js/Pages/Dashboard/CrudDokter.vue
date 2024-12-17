@@ -19,6 +19,7 @@ const newDoctor = ref({
   nama: '',
   email: '',
   password: '',
+  password_confirmation: '',
   alamat: '',
   no_hp: '',
   id_poli: null,
@@ -179,7 +180,8 @@ const saveDoctor = async () => {
                 await axios.post('/dokter', {
                     nama: newDoctor.value.nama,
                     email: newDoctor.value.email,
-                    password: hashedPasswordResponse.data.hashedPassword,  // Use the hashed password from the response
+                    password: newDoctor.value.password,  // Use the hashed password from the response
+                    password_confirmation: newDoctor.value.password,
                     alamat: newDoctor.value.alamat,
                     no_hp: newDoctor.value.no_hp,
                     id_poli: newDoctor.value.id_poli.value,  // Send only the value of id_poli
@@ -231,6 +233,10 @@ onBeforeMount(() => {
         <div class="field col-12 md:col-6">
           <label for="password">Password</label>
           <InputText id="password" v-model="newDoctor.password" type="password" placeholder="Enter doctor's password" />
+        </div>
+        <div class="field col-12 md:col-6">
+          <label for="password_confirmation">Confirm Password</label>
+          <InputText id="password_confirmation" v-model="newDoctor.password_confirmation" type="password" placeholder="Confirm patient's password" />
         </div>
         <div class="field col-12 md:col-6">
           <label for="alamat">Address</label>

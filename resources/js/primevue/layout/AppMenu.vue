@@ -7,7 +7,7 @@ import AppMenuItem from './AppMenuItem.vue';
 const model = ref([
     {
         label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/dashboard/pasien' },
+        items: [{ label: 'Dashboard Pasien', icon: 'pi pi-fw pi-home', to: '/dashboard/pasien' },
                 { label: 'Daftar Poli', icon: 'pi pi-fw pi-table', to: '/dashboard/daftar-poli' },
                 { label: 'Logout', icon: 'pi pi-fw pi-power-off', command: () => logout() } // Add logout button
         ]

@@ -24,12 +24,7 @@ const submit = () => {
 <template>
     <GuestLayout>
         <!-- Title untuk halaman -->
-        <Head title="Login Pasien" />
-
-        <!-- Header dengan teks sambutan -->
-        <div class="text-center text-2xl font-bold mb-6">
-            <p>Halo Pasien, Silakan Login</p>
-        </div>
+        <Head title="Login Paisen" />
 
         <!-- Form login -->
         <form @submit.prevent="submit">
@@ -75,17 +70,18 @@ const submit = () => {
             </div>
 
             <!-- Link untuk pendaftaran -->
-        <div class="text-center mt-6">
-            <p class="text-sm text-gray-600">
-                Belum punya akun? 
-                <a 
-                    :href="route('register')" 
-                    class="text-blue-500 hover:text-blue-700 underline"
-                >
-                    Daftar disini
-                </a>
-            </p>
-        </div>
+            <div class="text-center mt-6">
+                <p class="text-sm text-gray-600">
+                    Belum punya akun? 
+                    <link 
+                        :href="registerRoute" 
+                        class="text-blue-500 hover:text-blue-700 underline"
+                    >
+                        Daftar disini
+                </link>
+                </p>
+            </div>
+
         </form>
     </GuestLayout>
 </template>

@@ -94,7 +94,8 @@
         const response = await axios.post('/get-jadwal-by-poli', {
           id_poli: form.id_poli, // Send selected Poli ID
         });
-  
+        // Log the response to check its contents
+      console.log(response.data);  // Cek struktur respons dari backend
         // Store the returned jadwal options with doctor names
         jadwalOptions.value = response.data.jadwalOptions; // response.data.jadwalOptions will contain the jadwal options
       } catch (error) {

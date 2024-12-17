@@ -35,7 +35,7 @@ class DokterController extends Controller
 
         if (Auth::guard('dokter')->attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('dashboard.dokter')); // Harus mengarah ke /dashboard/dokteren
+            return redirect()->intended(route('dashboard.dokter')); 
         }
         
 
@@ -48,7 +48,7 @@ class DokterController extends Controller
     /**
      * Menampilkan dashboard dokteren.
      */
-    public function dashboarDokter()
+    public function dashboardDokter()
     {
         return Inertia::render('Dashboard/DokterDashboard', [
             'user' => Auth::guard('dokter')->user(),

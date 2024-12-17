@@ -7,6 +7,11 @@ use App\Models\Poli;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules;
+use Illuminate\Auth\Events\Registered;
 
 class CRUDDokterController extends Controller
 {
@@ -26,22 +31,32 @@ class CRUDDokterController extends Controller
     /**
      * Menyimpan data dokter baru.
      */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'id_poli' => 'required|exists:poli,id',
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:dokter,email',
-            'password' => 'required|min:8',
-            'alamat' => 'required|string|max:500',
-            'no_hp' => 'required|string|max:15',
-        ]);
+    public function store(Request $request): RedirectResponse
+{
+    // Validasi input data
+    $validated = $request->validate([
+        'id_poli' => 'required|exists:poli,id',
+        'nama' => 'required|string|max:255',
+        'email' => 'required|string|lowercase|email|max:255|unique:' . Dokter::class,
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        'alamat' => 'nullable|string|max:500',            // Tidak wajib diisi
+        'no_hp' => 'nullable|string|max:15',             // Tidak wajib diisi
+    ]);
 
-        $validated['password'] = Hash::make($validated['password']); // Hash password sebelum menyimpan
-        Dokter::create($validated);
+    // Buat dokter baru dan simpan data
+    $dokter = Dokter::create([
+        'id_poli' => $validated['id_poli'],
+        'nama' => $validated['nama'],
+        'email' => $validated['email'],
+        'password' => Hash::make($validated['password']), // Hash password sebelum menyimpan
+        'alamat' => $validated['alamat'],                // Menyimpan alamat jika ada
+        'no_hp' => $validated['no_hp'],                  // Menyimpan nomor HP jika ada
+    ]);
 
-        return redirect()->route('dokter.index')->with('success', 'Dokter berhasil ditambahkan.');
-    }
+    // Redirect ke halaman daftar dokter dengan pesan sukses
+    return redirect()->route('dokter.index')->with('success', 'Dokter berhasil ditambahkan.');
+}
+
 
     /**
      * Memperbarui data dokter.

@@ -18,6 +18,7 @@ const newPasien = ref({
   name: '',
   email: '',
   password: '',
+  password_confirmation: '',
   alamat: '',
   no_ktp: '',
   no_hp: '',
@@ -159,16 +160,15 @@ const savePasien = async () => {
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
-                // Hash the password before sending it
-                const hashedPasswordResponse = await axios.post('/hash-password', { password: newPasien.value.password });
-
                 // Auto-generate no_rm
                 newPasien.value.no_rm = generateNoRM();
 
+                // Kirim password mentah dan password_confirmation
                 await axios.post('/pasien', {
                     name: newPasien.value.name,
                     email: newPasien.value.email,
-                    password: hashedPasswordResponse.data.hashedPassword,
+                    password: newPasien.value.password, // Kirim password asli
+                    password_confirmation: newPasien.value.password, // Cocokkan dengan password
                     alamat: newPasien.value.alamat,
                     no_hp: newPasien.value.no_hp,
                     no_ktp: newPasien.value.no_ktp,
@@ -195,6 +195,7 @@ const savePasien = async () => {
     });
 };
 
+
 // Initialize filters on mount and fetch data
 onBeforeMount(() => {
     initFilters();
@@ -220,6 +221,11 @@ onBeforeMount(() => {
           <label for="password">Password</label>
           <InputText id="password" v-model="newPasien.password" type="password" placeholder="Enter patient's password" />
         </div>
+        <div class="field col-12 md:col-6">
+          <label for="password_confirmation">Confirm Password</label>
+          <InputText id="password_confirmation" v-model="newPasien.password_confirmation" type="password" placeholder="Confirm patient's password" />
+        </div>
+
         <div class="field col-12 md:col-6">
           <label for="alamat">Address</label>
           <InputText id="alamat" v-model="newPasien.alamat" placeholder="Enter patient's address" />

@@ -6,6 +6,11 @@ use App\Models\Pasien;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules;
+use Illuminate\Auth\Events\Registered;
 
 class CRUDPasienController extends Controller
 {
@@ -23,32 +28,42 @@ class CRUDPasienController extends Controller
     /**
      * Menyimpan data pasien baru.
      */
-    public function store(Request $request)
-    {
-        // Validate the incoming request
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:pasien,email',
-            'password' => 'required|min:8',
-            'alamat' => 'required|string|max:500',
-            'no_ktp' => 'required|string|max:20',
-            'no_hp' => 'required|string|max:15',
-        ]);
+    public function store(Request $request): RedirectResponse
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|lowercase|email|max:255|unique:' . Pasien::class,
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        'alamat' => 'nullable|string|max:255',   // Tidak required
+        'no_ktp' => 'nullable|string|max:20',    // Tidak required
+        'no_hp' => 'nullable|string|max:15',     // Tidak required
+        'no_rm' => 'nullable|string|max:20',     // Tidak required
+    ]);
 
-        // Auto-generate no_rm (e.g., 20241213-001)
-        $lastPasien = Pasien::orderBy('created_at', 'desc')->first();
-        $lastNoRm = $lastPasien ? $lastPasien->no_rm : null;
-        $noRm = $this->generateNoRm($lastNoRm);
+    // Ambil tanggal hari ini dalam format YYYYMMDD
+    $date = Carbon::now()->format('Ymd');
 
-        // Hash the password before saving
-        $validated['password'] = Hash::make($validated['password']);
-        $validated['no_rm'] = $noRm;
+    // Cari jumlah pasien yang sudah terdaftar pada tanggal tersebut
+    $count = Pasien::where('no_rm', 'like', "$date%")->count();
 
-        // Create a new Pasien entry
-        Pasien::create($validated);
+    // Nomor urut pasien, mulai dari 001
+    $no_rm = $date . '-' . str_pad($count + 1, 3, '0', STR_PAD_LEFT);
 
-        return redirect()->route('pasien.index')->with('success', 'Pasien berhasil ditambahkan.');
-    }
+    // Buat pasien baru dan simpan data
+    $pasien = Pasien::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'alamat' => $request->alamat,  // Menyimpan alamat
+        'no_ktp' => $request->no_ktp,  // Menyimpan nomor KTP
+        'no_hp' => $request->no_hp,    // Menyimpan nomor HP
+        'no_rm' => $no_rm,             // Menyimpan nomor rekam medis otomatis
+    ]);
+
+    // Redirect ke dashboard pasien setelah login
+    return redirect()->route('pasien.index')->with('success', 'Pasien berhasil ditambahkan.');
+}
+
 
     /**
      * Memperbarui data pasien.
@@ -91,11 +106,19 @@ class CRUDPasienController extends Controller
     /**
      * Menghapus data pasien.
      */
-    public function destroy(Pasien $pasien)
+    public function destroy($id)
     {
+        $pasien = Pasien::find($id);
+
+        if (!$pasien) {
+            return response()->json(['message' => 'Pasient not found'], 404);
+        }
+
         $pasien->delete();
+
         return redirect()->route('pasien.index')->with('success', 'Pasien berhasil dihapus.');
     }
+
 
     public function getPasien()
     {

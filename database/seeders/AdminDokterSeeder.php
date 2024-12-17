@@ -16,8 +16,8 @@ class AdminDokterSeeder extends Seeder
 
         // Menambahkan Dokter
         DB::table('dokter')->insert([
-            'nama' => 'valen',
-            'email' => 'valen@dokter.com',
+            'nama' => 'dokter',
+            'email' => 'dokter@dokter.com',
             'password' => Hash::make('dokter123'), // Ganti dengan password yang aman
             'alamat' => 'Alamat Dokter',
             'no_hp' => '081234567891',
@@ -31,6 +31,14 @@ class AdminDokterSeeder extends Seeder
             'name' => 'admin',
             'email' => 'admin@admin.com',
             'password' => Hash::make('admin123'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('pasien')->insert([
+            'name' => 'user',
+            'email' => 'user@user.com',
+            'password' => Hash::make('user1234'),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
