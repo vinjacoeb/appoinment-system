@@ -10,6 +10,7 @@ class Daftar extends Model
     protected $table = 'daftar_poli';
 
     protected $fillable = [
+        'id',
         'id_pasien',
         'id_jadwal',
         'keluhan',

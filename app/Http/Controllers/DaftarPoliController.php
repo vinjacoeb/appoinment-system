@@ -75,25 +75,41 @@ class DaftarPoliController extends Controller
 {
     // Validasi data input
     $request->validate([
-        'id_poli' => 'required|exists:poli,id',  // Pastikan id_poli ada di tabel polis
-        'id_jadwal' => 'required|exists:jadwal_periksa,id',  // Pastikan id_jadwal ada di tabel jadwals
-        'keluhan' => 'required|string',  // Keluhan wajib diisi
+        'id_poli' => 'required|exists:poli,id',          // Pastikan id_poli ada di tabel polis
+        'id_jadwal' => 'required|exists:jadwal_periksa,id',      // Pastikan id_jadwal ada di tabel jadwal
+        'keluhan' => 'required|string',                 // Keluhan wajib diisi
     ]);
 
-    // Generate nomor antrian
-    $noAntrian = str_pad(Daftar::count() + 1, 3, '0', STR_PAD_LEFT);
+    // Ambil id dokter dari jadwal
+    $jadwal = Jadwal::findOrFail($request->id_jadwal);
+    $idDokter = $jadwal->id_dokter;
+
+    // Ambil tanggal hari ini
+    $tanggalHariIni = now()->toDateString();
+
+    // Hitung jumlah antrian untuk dokter tersebut pada hari ini
+    $jumlahAntrianHariIni = Daftar::whereHas('jadwal', function ($query) use ($idDokter) {
+            $query->where('id_dokter', $idDokter); // Filter berdasarkan dokter
+        })
+        ->whereDate('created_at', $tanggalHariIni) // Filter berdasarkan tanggal hari ini
+        ->count();
+
+    // Hitung nomor antrian baru
+    $noAntrian = $jumlahAntrianHariIni + 1;
 
     // Menyimpan data pendaftaran poli
     Daftar::create([
-        'id_pasien' => auth()->id(),  // Mengambil id pasien yang sedang login
-        'id_poli' => $request->id_poli,  // Menyimpan id poli yang dipilih
-        'id_jadwal' => $request->id_jadwal,  // Menyimpan id jadwal yang dipilih
-        'keluhan' => $request->keluhan,  // Menyimpan keluhan pasien
-        'no_antrian' => $noAntrian,  // Menyimpan nomor antrian yang sudah digenerate
+        'id_pasien' => auth()->id(),        // ID pasien yang sedang login
+        'id_poli' => $request->id_poli,     // ID poli yang dipilih
+        'id_jadwal' => $request->id_jadwal, // ID jadwal (dokter yang dipilih)
+        'keluhan' => $request->keluhan,     // Keluhan pasien
+        'no_antrian' => $noAntrian,         // Nomor antrian baru
     ]);
 
     // Redirect ke halaman daftar poli setelah berhasil
     return redirect()->route('daftar-poli.index')->with('success', 'Pendaftaran poli berhasil!');
 }
+
+
 
 }

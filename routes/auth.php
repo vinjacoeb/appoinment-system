@@ -18,6 +18,8 @@ use App\Http\Controllers\CRUDDokterController;
 use App\Http\Controllers\CRUDPasienController;
 use App\Http\Controllers\CRUDPoliController;
 use App\Http\Controllers\CRUDObatController;
+use App\Http\Controllers\CRUDJadwalPeriksaController;
+use App\Http\Controllers\CRUDPeriksaController;
 use App\Http\Controllers\Auth\DokterDashboardController;
 use App\Http\Controllers\Auth\AdminDashboardController;
 
@@ -61,6 +63,20 @@ Route::middleware('auth:pasien')->group(function () {
 
 Route::middleware(['auth:dokter'])->group(function () {
     Route::get('/dashboard/dokter', [DokterDashboardController::class, 'index'])->name('dashboard.dokter');
+
+    Route::get('/dashboard/jadwal-periksa', [CRUDJadwalPeriksaController::class, 'index'])->name('jadwal-periksa.index');
+    Route::post('jadwal-periksa', [CRUDJadwalPeriksaController::class, 'store'])->name('jadwal-periksa.store');
+    Route::post('jadwal-periksa/{id}', [CRUDJadwalPeriksaController::class, 'update'])->name('jadwal-periksa.update');
+    Route::delete('jadwal-periksa/{id}', [CRUDJadwalPeriksaController::class, 'destroy'])->name('jadwal-periksa.destroy');
+    Route::get('/jadwal-periksa', [CRUDJadwalPeriksaController::class, 'getJadwal']);
+
+    Route::get('/dashboard/periksa-pasien', [CRUDPeriksaController::class, 'index'])->name('periksa.index');
+    Route::get('periksa/{id}', [CRUDPeriksaController::class, 'update'])->name('periksa.update');
+    Route::delete('periksa-pasien/{id}', [CRUDPeriksaController::class, 'destroy'])->name('periksa.destroy');
+    Route::get('/periksa', [CRUDPeriksaController::class, 'getPeriksa']);
+    Route::get('/obatt', [CRUDPeriksaController::class, 'getObat']);
+    Route::post('/periksa', [CRUDPeriksaController::class, 'savePeriksa']);
+    Route::get('/periksa/{id}/is-saved', [CRUDPeriksaController::class, 'isSaved']);
     
 });
 

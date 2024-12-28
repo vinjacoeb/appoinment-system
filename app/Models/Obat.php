@@ -41,7 +41,10 @@ class Obat extends Model
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'harga' => 'decimal:2', // Cast harga to a decimal with two decimal places
-    ];
+    // In Obat model
+    public function detailPeriksa()
+    {
+        return $this->hasMany(DetailPeriksa::class, 'id_obat');  // Adjust the foreign key if necessary
+    }
+
 }

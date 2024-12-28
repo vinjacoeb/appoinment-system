@@ -9,7 +9,7 @@ const model = ref([
         label: 'Home',
         items: [
                 { label: 'Dashboard Dokter', icon: 'pi pi-fw pi-home', to: '/dashboard/dokter' },
-                { label: 'Input Jadwal', icon: 'pi pi-fw pi-calendar', to: '/dashboard/input-jadwal' },
+                { label: 'Input Jadwal', icon: 'pi pi-fw pi-calendar', to: '/dashboard/jadwal-periksa' },
                 { label: 'Periksa Pasien', icon: 'pi pi-fw pi-heart-fill', to: '/dashboard/periksa-pasien' },
                 { label: 'Riwayat Pasien', icon: 'pi pi-fw pi-book', to: '/dashboard/riwayat-pasien' },
                 { label: 'Logout', icon: 'pi pi-fw pi-power-off', command: () => logout() } // Add logout button

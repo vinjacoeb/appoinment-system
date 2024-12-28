@@ -7,7 +7,7 @@ import AppMenuItem from './AppMenuItem.vue';
 const model = ref([
     {
         label: 'Home',
-        items: [{ label: 'Admin Dashboard', icon: 'pi pi-fw pi-cog', to: '/dashboard/admin' },
+        items: [{ label: 'Dashboard Admin', icon: 'pi pi-fw pi-cog', to: '/dashboard/admin' },
             { label: 'Edit Dokter', icon: 'pi pi-fw pi-user-edit', to: '/dashboard/crud-dokter' },
             { label: 'Edit Pasien', icon: 'pi pi-fw pi-user-edit', to: '/dashboard/crud-pasien' },
             { label: 'Poli', icon: 'pi pi-fw pi-calendar', to: '/dashboard/crud-poli' },
