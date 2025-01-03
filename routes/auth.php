@@ -20,8 +20,11 @@ use App\Http\Controllers\CRUDPoliController;
 use App\Http\Controllers\CRUDObatController;
 use App\Http\Controllers\CRUDJadwalPeriksaController;
 use App\Http\Controllers\CRUDPeriksaController;
+use App\Http\Controllers\RiwayatPasienController;
 use App\Http\Controllers\Auth\DokterDashboardController;
 use App\Http\Controllers\Auth\AdminDashboardController;
+use App\Http\Controllers\ProfilDokterController;
+use App\Http\Controllers\RiwayatController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -59,6 +62,12 @@ Route::middleware('auth:pasien')->group(function () {
     Route::post('/dashboard/daftar-poli', [DaftarPoliController::class, 'store'])->name('daftar-poli.store');
     Route::post('/get-jadwal-by-poli', [DaftarPoliController::class, 'getJadwalByPoli']);
 
+    Route::get('/dashboard/riwayat', [RiwayatController::class, 'index'])->name('riwayat.index');
+    Route::get('/show-riwayat', [RiwayatController::class, 'show']);
+    Route::get('/riwayat/{id_daftar_poli}', [RiwayatController::class, 'getPeriksa']);
+
+
+
 });
 
 Route::middleware(['auth:dokter'])->group(function () {
@@ -77,6 +86,14 @@ Route::middleware(['auth:dokter'])->group(function () {
     Route::get('/obatt', [CRUDPeriksaController::class, 'getObat']);
     Route::post('/periksa', [CRUDPeriksaController::class, 'savePeriksa']);
     Route::get('/periksa/{id}/is-saved', [CRUDPeriksaController::class, 'isSaved']);
+
+    Route::get('/dashboard/riwayat-pasien', [RiwayatPasienController::class, 'index'])->name('riwayat.index');
+    Route::get('/riwayat-periksa', [RiwayatPasienController::class, 'getRiwayatPeriksa']);
+    Route::put('/riwayat-periksa/{id}', [RiwayatPasienController::class, 'savePeriksa']);
+
+    Route::get('/dashboard/profil-dokter', [ProfilDokterController::class, 'index'])->name('profil.index');
+    Route::post('/update-profil', [ProfilDokterController::class, 'update']);
+    Route::get('/profil-dokter', [ProfilDokterController::class, 'getProfil']);
     
 });
 

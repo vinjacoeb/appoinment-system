@@ -9,6 +9,7 @@ const model = ref([
         label: 'Home',
         items: [{ label: 'Dashboard Pasien', icon: 'pi pi-fw pi-home', to: '/dashboard/pasien' },
                 { label: 'Daftar Poli', icon: 'pi pi-fw pi-table', to: '/dashboard/daftar-poli' },
+                { label: 'Riwayat', icon: 'pi pi-fw pi-book', to: '/dashboard/riwayat' },
                 { label: 'Logout', icon: 'pi pi-fw pi-power-off', command: () => logout() } // Add logout button
         ]
     }

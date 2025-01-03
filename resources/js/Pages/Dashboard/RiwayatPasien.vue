@@ -2,9 +2,9 @@
   <app-layout>
     <div>
       <div class="card">
-        <h5>Daftar Poli</h5>
+        <h5>Riwayat Periksa</h5>
         <DataTable
-          :value="daftarPoli"
+          :value="riwayatPeriksa"
           :paginator="true"
           :rows="10"
           :loading="loading"
@@ -21,18 +21,25 @@
             </span>
           </template>
 
-          <Column field="name" header="Nama Pasien" />
-          <Column field="keluhan" header="Complaint" />
-          <Column field="no_antrian" header="Queue No" />
+          <Column field="nama_pasien" header="Nama Pasien" />
+          <Column field="tgl_periksa" header="Tanggal Periksa" />
+          <Column field="biaya_periksa" header="Biaya Periksa" />
+          <Column field="catatan" header="Catatan" />
+          <Column header="Obat">
+            <template #body="{ data }">
+              <ul>
+                <li v-for="detail in data.detailPeriksa" :key="detail.id">{{ detail.obat.nama_obat }}</li>
+              </ul>
+            </template>
+          </Column>
           <Column header="Action">
             <template #body="{ data }">
-    <Button 
-      :icon="data.isSaved ? 'pi pi-check' : 'pi pi-pencil'" 
-      @click="data.isSaved ? null : editPasien(data.id)" 
-      :class="data.isSaved ? 'p-button-rounded p-button-success' : 'p-button-rounded p-button-info'" 
-      :disabled="data.isSaved" 
-    />
-  </template>
+              <Button 
+                icon="pi pi-pencil" 
+                @click="editPeriksa(data.id)" 
+                class="p-button-rounded p-button-info" 
+              />
+            </template>
           </Column>
         </DataTable>
       </div>
@@ -40,8 +47,8 @@
       <Dialog v-model:visible="isEditModalVisible" header="Edit Data Periksa" :modal="true" :closable="true">
         <div class="p-fluid">
           <div class="field">
-            <label for="name">Nama Pasien</label>
-            <InputText v-model="editData.name" id="name" readonly />
+            <label for="nama_pasien">Nama Pasien</label>
+            <InputText v-model="editData.nama_pasien" id="nama_pasien" readonly />
           </div>
 
           <div class="field">
@@ -74,7 +81,7 @@
         </div>
 
         <template #footer>
-          <Button label="Save" class="p-button-primary" @click="saveEdit" :loading="isSaving" />
+          <Button label="Save" class="p-button-primary" @click="saveEdit" />
           <Button label="Cancel" class="p-button-secondary ml-2" @click="isEditModalVisible = false" />
         </template>
       </Dialog>
@@ -96,21 +103,20 @@ import Dialog from 'primevue/dialog';
 import Calendar from 'primevue/calendar';
 import MultiSelect from 'primevue/multiselect';
 
-const daftarPoli = ref([]);
+const riwayatPeriksa = ref([]);
 const filters = ref(null);
 const loading = ref(false);
 const isEditModalVisible = ref(false);
 const editData = ref({});
 const obatList = ref([]);
 const selectedObat = ref([]);
-const isSaving = ref(false);
 const biayaJasaDokter = 150000;
 
 const fetchData = async () => {
   loading.value = true;
   try {
-    const response = await axios.get('/periksa');
-    daftarPoli.value = response.data;
+    const response = await axios.get('/riwayat-periksa');
+    riwayatPeriksa.value = response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
   } finally {
@@ -127,25 +133,25 @@ const fetchObatData = async () => {
   }
 };
 
-const editPasien = async (id) => {
-  const poliData = daftarPoli.value.find(item => item.id === id);
-  if (!poliData) return;
+const editPeriksa = async (id) => {
+  const periksaData = riwayatPeriksa.value.find(item => item.id === id);
+  if (!periksaData) return;
 
   await fetchObatData();
 
   editData.value = {
-    id_daftar_poli: poliData.id,
-    name: poliData.name,
-    tgl_periksa: null,
-    catatan: "",
-    obat: [],
-    biaya_periksa: biayaJasaDokter,
+    id: periksaData.id,
+    id_daftar_poli: periksaData.id_daftar_poli, // Tambahkan id_daftar_poli
+    nama_pasien: periksaData.pasien.name, // Past ikan nama pasien diambil dari relasi yang benar
+    tgl_periksa: periksaData.tgl_periksa,
+    catatan: periksaData.catatan,
+    obat: periksaData.detailPeriksa.map(detail => detail.id_obat),
+    biaya_periksa: periksaData.biaya_periksa,
   };
 
-  selectedObat.value = [];
+  selectedObat.value = periksaData.detailPeriksa.map(detail => detail.id_obat);
   isEditModalVisible.value = true;
 };
-
 
 watch(selectedObat, () => {
   const biayaObat = selectedObat.value.reduce((total, id) => {
@@ -156,35 +162,46 @@ watch(selectedObat, () => {
   editData.value.biaya_periksa = biayaObat + biayaJasaDokter;
 }, { immediate: true });
 
-
 const saveEdit = async () => {
-    try {
-        const response = await axios.post('/periksa', {
-            id_daftar_poli: editData.value.id_daftar_poli,
-            tgl_periksa: editData.value.tgl_periksa,
-            biaya_periksa: editData.value.biaya_periksa,
-            catatan: editData.value.catatan,
-            obats: selectedObat.value,
-        });
+  try {
+    const response = await axios.put(`/riwayat-periksa/${editData.value.id}`, {
+      id_daftar_poli: editData.value.id_daftar_poli, // Sertakan id_daftar_poli dalam payload
+      tgl_periksa: editData.value.tgl_periksa,
+      biaya_periksa: editData.value.biaya_periksa,
+      catatan: editData.value.catatan,
+      obats: selectedObat.value,
+    });
 
-        Swal.fire("Success", "Data berhasil disimpan.", "success");
+    Swal.fire("Success", "Data berhasil disimpan.", "success");
 
-        // Tandai data sebagai tersimpan di frontend
-        const poliIndex = daftarPoli.value.findIndex(poli => poli.id === editData.value.id_daftar_poli);
-        if (poliIndex !== -1) {
-            daftarPoli.value[poliIndex].isSaved = true;
-        }
-
-        isEditModalVisible.value = false;
-    } catch (error) {
-        console.error("Error saving data:", error);
-        Swal.fire("Error", "Gagal menyimpan data.", "error");
+    // Perbarui data di frontend
+    const periksaIndex = riwayatPeriksa.value.findIndex(periksa => periksa.id === editData.value.id);
+    if (periksaIndex !== -1) {
+      riwayatPeriksa.value[periksaIndex] = { ...editData.value, detailPeriksa: selectedObat.value.map(id => ({ id_obat: id, obat: obatList.value.find(obat => obat.id === id) })) };
     }
-};
 
+    isEditModalVisible.value = false;
+  } catch (error) {
+    console.error("Error saving data:", error);
+    Swal.fire("Error", "Gagal menyimpan data.", "error");
+  }
+};
 
 onBeforeMount(() => {
   filters.value = { global: { value: null, matchMode: FilterMatchMode.CONTAINS } };
   fetchData();
 });
 </script>
+
+<style scoped>
+.card {
+  margin-top: 20px;
+}
+.custom-blue-button {
+  background-color: #007bff;
+  color: white;
+}
+.custom-blue-button:hover {
+  background-color: #0056b3;
+}
+</style>

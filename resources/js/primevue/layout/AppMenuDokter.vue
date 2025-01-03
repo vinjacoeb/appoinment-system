@@ -12,6 +12,7 @@ const model = ref([
                 { label: 'Input Jadwal', icon: 'pi pi-fw pi-calendar', to: '/dashboard/jadwal-periksa' },
                 { label: 'Periksa Pasien', icon: 'pi pi-fw pi-heart-fill', to: '/dashboard/periksa-pasien' },
                 { label: 'Riwayat Pasien', icon: 'pi pi-fw pi-book', to: '/dashboard/riwayat-pasien' },
+                { label: 'Profile Dokter', icon: 'pi pi-fw pi-user', to: '/dashboard/profil-dokter' },
                 { label: 'Logout', icon: 'pi pi-fw pi-power-off', command: () => logout() } // Add logout button
             ]
     }
