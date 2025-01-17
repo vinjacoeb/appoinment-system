@@ -47,6 +47,7 @@ class DaftarPoliController extends Controller
     $jadwalOptions = Jadwal::whereHas('dokter', function ($query) use ($request) {
             $query->where('id_poli', $request->id_poli);
         })
+        ->where('status', true)
         ->with('dokter') // Ensure the dokter relationship is eager-loaded
         ->select('id', 'hari', 'jam_mulai', 'jam_selesai', 'id_dokter')
         ->get();

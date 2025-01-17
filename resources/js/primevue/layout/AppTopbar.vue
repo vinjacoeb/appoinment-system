@@ -61,8 +61,8 @@ const isOutsideClicked = (event) => {
 <template>
     <div class="layout-topbar">
         <NavLink href="/" class="layout-topbar-logo">
-            <img :src="logoUrl" alt="logo" />
-            <span>SAKAI</span>
+            <img src="https://i.ibb.co.com/C5kgV8n/DALL-E-2025-01-17-22-08-32-A-minimalist-logo-design-for-a-hospital-appointment-system-featuring-a-si.webp"/>
+            <span>Appointment System</span>
         </NavLink>
 
         <button class="p-link layout-menu-button layout-topbar-button" @click="onMenuToggle()">

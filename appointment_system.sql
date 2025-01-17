@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jan 03, 2025 at 11:56 PM
+-- Generation Time: Jan 17, 2025 at 11:35 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -42,7 +42,6 @@ CREATE TABLE `daftar_poli` (
 --
 
 INSERT INTO `daftar_poli` (`id`, `id_pasien`, `id_jadwal`, `keluhan`, `no_antrian`, `created_at`, `updated_at`) VALUES
-(7, 12, 6, 'sakit gigi kanan', 1, '2024-12-17 10:26:41', '2024-12-17 10:26:41'),
 (8, 12, 5, 'sakit gigi kiri', 2, '2024-12-17 10:26:50', '2024-12-17 10:26:50'),
 (9, 8, 5, 'sakit gigi akut', 1, '2024-12-27 05:50:00', '2024-12-27 05:50:00'),
 (10, 12, 7, 'keram', 1, '2025-01-01 11:58:08', '2025-01-01 11:58:08'),
@@ -67,7 +66,6 @@ CREATE TABLE `detail_periksa` (
 --
 
 INSERT INTO `detail_periksa` (`id`, `id_periksa`, `id_obat`, `created_at`, `updated_at`) VALUES
-(18, 18, 6, '2024-12-28 17:10:07', '2024-12-28 17:10:07'),
 (21, 20, 7, '2024-12-28 17:10:54', '2024-12-28 17:10:54'),
 (23, 19, 7, '2024-12-28 17:18:21', '2024-12-28 17:18:21'),
 (24, 19, 6, '2025-01-01 08:59:09', '2025-01-01 08:59:09'),
@@ -139,10 +137,10 @@ CREATE TABLE `jadwal_periksa` (
 --
 
 INSERT INTO `jadwal_periksa` (`id`, `id_dokter`, `hari`, `jam_mulai`, `jam_selesai`, `status`, `created_at`, `updated_at`) VALUES
-(5, 22, 'Senin', '12:00:00', '15:00:00', 0, '2024-12-17 06:28:44', '2024-12-17 07:10:32'),
-(6, 22, 'Selasa', '12:00:00', '15:00:00', 1, '2024-12-17 06:29:01', '2024-12-17 07:10:37'),
+(5, 22, 'Senin', '12:00:00', '15:00:00', 1, '2024-12-17 06:28:44', '2025-01-17 07:37:51'),
 (7, 25, 'Rabu', '09:00:00', '12:00:00', 1, '2024-12-17 08:26:51', '2024-12-17 08:26:51'),
-(8, 22, 'Kamis', '09:00:00', '12:00:00', 0, '2025-01-01 12:07:23', '2025-01-01 12:08:20');
+(17, 22, 'Selasa', '09:00:00', '12:00:00', 1, '2025-01-03 20:29:47', '2025-01-03 20:29:47'),
+(18, 22, 'Rabu', '12:00:00', '15:00:00', 0, '2025-01-17 07:38:09', '2025-01-17 07:39:40');
 
 -- --------------------------------------------------------
 
@@ -264,7 +262,6 @@ CREATE TABLE `periksa` (
 --
 
 INSERT INTO `periksa` (`id`, `id_daftar_poli`, `tgl_periksa`, `catatan`, `biaya_periksa`, `created_at`, `updated_at`) VALUES
-(18, 7, '2024-12-28', 'minum obat', 160000, '2024-12-28 17:10:07', '2024-12-28 17:18:31'),
 (19, 8, '2024-12-28', 'sabar ya', 180000, '2024-12-28 17:10:20', '2025-01-01 08:59:09'),
 (20, 9, '2024-12-28', 'minum obat woy', 160000, '2024-12-28 17:10:54', '2024-12-28 17:15:27'),
 (25, 11, '2025-01-05', 'jangan makan coklat banyak banyak', 180000, '2025-01-01 12:04:52', '2025-01-01 12:05:38');
@@ -490,7 +487,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `jadwal_periksa`
 --
 ALTER TABLE `jadwal_periksa`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `migrations`

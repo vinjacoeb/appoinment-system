@@ -43,13 +43,6 @@
                 </div>
             </a>
 
-            <!-- Kartu Login Pasien -->
-            <a href="/login/admin" class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105">
-                <h2 class="text-2xl font-semibold text-center text-blue-600 mb-4">Login Admin</h2>
-                <div class="w-full bg-blue-600 text-white text-center py-3 rounded-md hover:bg-blue-700">
-                    Masuk
-                </div>
-                </a>
             </div>
           </div>
         </div>
@@ -59,7 +52,7 @@
       <footer class="bg-gray-800 text-white py-6">
         <div class="max-w-7xl mx-auto px-6 text-center">
           <p>&copy; 2024 Sistem Janji Temu. All rights reserved.</p>
-          <p>Created by <a href="#" class="text-blue-400">Your Company</a></p>
+          <p>Created by <a href="#" class="text-blue-400">Appoinment system Team</a></p>
         </div>
       </footer>
     </div>

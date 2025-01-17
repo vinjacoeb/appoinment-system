@@ -57,26 +57,27 @@ const statusOptions = [
 ];
 
 
+
 const saveJadwal = async () => {
   try {
-    const statusValue = newJadwal.value.status.value;
     const dataToSend = { 
       ...newJadwal.value, 
-      status: statusValue 
+      status: newJadwal.value.status // Tidak perlu .value
     };
 
     await axios.post('/jadwal-periksa', dataToSend);
     fetchData();
     Swal.fire('Success!', 'Jadwal Periksa added successfully.', 'success');
-    newJadwal.value = { hari: '', jam_mulai: '', jam_selesai: '', status: { label: "Aktif"} };
+    newJadwal.value = { hari: '', jam_mulai: '', jam_selesai: '', status: true };
   } catch (error) {
-    if (error.response && error.response.status === 400) {
+    if (error.response && error.response.data) {
       Swal.fire('Error!', error.response.data.message || 'Anda Tidak Dapat Menambah Jadwal Periksa.', 'error');
     } else {
       Swal.fire('Error!', 'Terjadi kesalahan saat menambah jadwal.', 'error');
     }
   }
 };
+
 
 
 
@@ -90,11 +91,11 @@ const editJadwal = ref({
   status: true,
 });
 
-// Open Edit Modal
 const openEditModal = (jadwal) => {
-  editJadwal.value = { ...jadwal };
+  editJadwal.value = { ...jadwal, status: !!jadwal.status }; // Pastikan status berupa boolean
   editModalVisible.value = true;
 };
+
 
 // Close Edit Modal
 const closeEditModal = () => {
@@ -105,14 +106,11 @@ const closeEditModal = () => {
 // Update Jadwal Periksa
 const updateJadwal = async () => {
   try {
-    // Pastikan hanya mengirim nilai boolean untuk status
-    const statusValue = editJadwal.value.status.value;  // Ambil nilai boolean dari objek status
     const dataToSend = { 
       ...editJadwal.value, 
-      status: statusValue  // Mengirimkan status sebagai boolean
+      status: editJadwal.value.status // Tidak perlu .value
     };
 
-    // Lakukan update dengan data yang sudah diperbaiki
     await axios.post(`/jadwal-periksa/${editJadwal.value.id}`, dataToSend);
     fetchData();
     Swal.fire('Updated!', 'Jadwal Periksa updated successfully.', 'success');
@@ -121,6 +119,7 @@ const updateJadwal = async () => {
     Swal.fire('Error!', 'Failed to update Jadwal Periksa.', 'error');
   }
 };
+
 
 
 // Delete Jadwal Periksa
@@ -175,7 +174,15 @@ onBeforeMount(() => {
         </div>
         <div class="field col-12 md:col-3">
           <label for="status">Status</label>
-          <Dropdown id="status" v-model="newJadwal.status" :options="statusOptions" placeholder="Select status" />
+          <Dropdown 
+          id="status" 
+          v-model="newJadwal.status" 
+          :options="statusOptions" 
+          optionLabel="label" 
+          optionValue="value" 
+          placeholder="Select status" 
+        />
+
         </div>
         <div class="col-12 text-right">
           <Button label="Save" class="custom-blue-button" @click="saveJadwal" />
@@ -190,7 +197,12 @@ onBeforeMount(() => {
         <Column field="hari" header="Day"></Column>
         <Column field="jam_mulai" header="Start Time"></Column>
         <Column field="jam_selesai" header="End Time"></Column>
-        <Column field="status" header="Status"></Column>
+        <Column field="status" header="Status">
+        <template #body="{ data }">
+          <span>{{ data.status ? "Aktif" : "Tidak Aktif" }}</span>
+        </template>
+      </Column>
+
         <Column header="Actions">
           <template #body="{ data }">
             <Button icon="pi pi-pencil" class="p-button-rounded p-button-info" @click="openEditModal(data)" />
@@ -216,7 +228,14 @@ onBeforeMount(() => {
           </div>
           <div class="field col-12">
             <label for="editStatus">Status</label>
-            <Dropdown id="editStatus" v-model="editJadwal.status" :options="statusOptions" />
+            <Dropdown 
+  id="editStatus" 
+  v-model="editJadwal.status" 
+  :options="statusOptions" 
+  optionLabel="label" 
+  optionValue="value" 
+/>
+
           </div>
         </div>
         <div class="text-right">
