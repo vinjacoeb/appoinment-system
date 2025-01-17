@@ -57,23 +57,27 @@ const statusOptions = [
 ];
 
 
-// Save a new jadwal periksa
 const saveJadwal = async () => {
   try {
-    // Pastikan hanya mengirim nilai boolean untuk status
-    const statusValue = newJadwal.value.status.value;  // Ambil nilai boolean dari objek status
+    const statusValue = newJadwal.value.status.value;
     const dataToSend = { 
       ...newJadwal.value, 
       status: statusValue 
     };
+
     await axios.post('/jadwal-periksa', dataToSend);
     fetchData();
     Swal.fire('Success!', 'Jadwal Periksa added successfully.', 'success');
-    newJadwal.value = { hari: '', jam_mulai: '', jam_selesai: '', status: { label: "Aktif", value: true } };
+    newJadwal.value = { hari: '', jam_mulai: '', jam_selesai: '', status: { label: "Aktif"} };
   } catch (error) {
-    Swal.fire('Error!', 'Failed to add Jadwal Periksa.', 'error');
+    if (error.response && error.response.status === 400) {
+      Swal.fire('Error!', error.response.data.message || 'Anda Tidak Dapat Menambah Jadwal Periksa.', 'error');
+    } else {
+      Swal.fire('Error!', 'Terjadi kesalahan saat menambah jadwal.', 'error');
+    }
   }
 };
+
 
 
 // Edit Modal state

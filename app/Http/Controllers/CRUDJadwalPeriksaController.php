@@ -25,63 +25,85 @@ class CRUDJadwalPeriksaController extends Controller
 
     // Menyimpan jadwal periksa baru
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'hari' => 'required|string|max:15',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-            'status' => 'required|boolean', // Aktif/Tidak Aktif
-        ]);
+{
+    $validated = $request->validate([
+        'hari' => 'required|string|max:15',
+        'jam_mulai' => 'required|date_format:H:i',
+        'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+        'status' => 'required|boolean',
+    ]);
 
-        // Format waktu menggunakan Carbon untuk memastikan format H:i
-        $jamMulai = Carbon::createFromFormat('H:i', $validated['jam_mulai'])->format('H:i');
-        $jamSelesai = Carbon::createFromFormat('H:i', $validated['jam_selesai'])->format('H:i');
+    // Format waktu menggunakan Carbon untuk memastikan format H:i
+    $jamMulai = Carbon::createFromFormat('H:i', $validated['jam_mulai'])->format('H:i');
+    $jamSelesai = Carbon::createFromFormat('H:i', $validated['jam_selesai'])->format('H:i');
 
-        // Simpan data jadwal periksa dengan id_dokter dari dokter yang sedang login
-        Jadwal::create([
-            'id_dokter' => Auth::id(),
-            'hari' => $validated['hari'],
-            'jam_mulai' => $jamMulai,
-            'jam_selesai' => $jamSelesai,
-            'status' => $validated['status'],
-        ]);
+    // Check if the schedule already exists for the doctor on the same day
+    $existingSchedule = Jadwal::where('id_dokter', Auth::id())
+        ->where('hari', $validated['hari'])
+        ->exists();
 
-        return redirect()->route('jadwal-periksa.index')->with('success', 'Jadwal periksa berhasil ditambahkan.');
-    }
-
-    // Memperbarui jadwal periksa
-    public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'hari' => 'required|string|max:15',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-            'status' => 'required|boolean', // Aktif/Tidak Aktif
-        ]);
-
-        // Format waktu menggunakan Carbon untuk memastikan format H:i
-        $jamMulai = Carbon::createFromFormat('H:i', $validated['jam_mulai'])->format('H:i');
-        $jamSelesai = Carbon::createFromFormat('H:i', $validated['jam_selesai'])->format('H:i');
-
-        // Cari jadwal periksa milik dokter yang sedang login
-        $jadwal = Jadwal::where('id', $id)
-            ->where('id_dokter', Auth::id())
-            ->first();
-
-        if (!$jadwal) {
-            return response()->json(['message' => 'Jadwal periksa tidak ditemukan'], 404);
+        if ($existingSchedule) {
+            return response()->json([
+                'message' => 'Anda Tidak Dapat Menambah Jadwal Periksa. Jadwal periksa sudah ada untuk hari tersebut.'
+            ], 400);
         }
+        
 
-        // Update jadwal periksa dengan data yang sudah diformat
-        $jadwal->update([
-            'hari' => $validated['hari'],
-            'jam_mulai' => $jamMulai,
-            'jam_selesai' => $jamSelesai,
-            'status' => $validated['status'],
-        ]);
+    Jadwal::create([
+        'id_dokter' => Auth::id(),
+        'hari' => $validated['hari'],
+        'jam_mulai' => $jamMulai,
+        'jam_selesai' => $jamSelesai,
+        'status' => $validated['status'],
+    ]);
 
-        return redirect()->route('jadwal-periksa.index')->with('success', 'Jadwal periksa berhasil diperbarui.');
+    return redirect()->route('jadwal-periksa.index')->with('success', 'Jadwal periksa berhasil ditambahkan.');
+}
+
+public function update(Request $request, $id)
+{
+    $validated = $request->validate([
+        'hari' => 'required|string|max:15',
+        'jam_mulai' => 'required|date_format:H:i',
+        'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+        'status' => 'required|boolean',
+    ]);
+
+    // Format waktu menggunakan Carbon untuk memastikan format H:i
+    $jamMulai = Carbon::createFromFormat('H:i', $validated['jam_mulai'])->format('H:i');
+    $jamSelesai = Carbon::createFromFormat('H:i', $validated['jam_selesai'])->format('H:i');
+
+    // Check if the schedule already exists for the doctor
+    $existingSchedule = Jadwal::where('id_dokter', Auth::id())
+        ->where('hari', $validated['hari'])
+        ->where('jam_mulai', $jamMulai)
+        ->where('jam_selesai', $jamSelesai)
+        ->where('id', '!=', $id)
+        ->exists();
+
+    if ($existingSchedule) {
+        return redirect()->route('jadwal-periksa.index')->with('error', 'Jadwal periksa sudah ada untuk waktu tersebut.');
     }
+
+    // Cari jadwal periksa milik dokter yang sedang login
+    $jadwal = Jadwal::where('id', $id)
+        ->where('id_dokter', Auth::id())
+        ->first();
+
+    if (!$jadwal) {
+        return response()->json(['message' => 'Jadwal periksa tidak ditemukan'], 404);
+    }
+
+    // Update jadwal periksa dengan data yang sudah diformat
+    $jadwal->update([
+        'hari' => $validated['hari'],
+        'jam_mulai' => $jamMulai,
+        'jam_selesai' => $jamSelesai,
+        'status' => $validated['status'],
+    ]);
+
+    return redirect()->route('jadwal-periksa.index')->with('success', 'Jadwal periksa berhasil diperbarui.');
+}
     /**
      * Menghapus jadwal periksa.
      */
